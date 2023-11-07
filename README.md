@@ -1,4 +1,3 @@
-# terraform-aws-ec2
 # Terraform-aws-ec2
 
 This README provides information about the module you have provided for provisioning AWS resources using Terraform. Please refer to the sections below for detailed information about the module.
