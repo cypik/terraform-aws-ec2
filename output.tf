@@ -52,11 +52,6 @@ output "subnet_id" {
   description = "The EC2 subnet ID."
 }
 
-output "instance_count" {
-  value       = var.instance_count
-  description = "The count of instances."
-}
-
 output "name" {
   value       = join("", aws_key_pair.default[*].key_name)
   description = "Name of SSH key."

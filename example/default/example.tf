@@ -7,7 +7,7 @@ provider "aws" {
 }
 
 locals {
-  environment = "app-test"
+  environment = "app"
   label_order = ["name", "environment"]
 }
 
@@ -15,7 +15,7 @@ locals {
 ## A VPC is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
 ##=====================================================================================
 module "vpc" {
-  source      = "git::git@github.com:opz0/terraform-aws-vpc.git?ref=master"
+  source      = "git::git@github.com:opz0/terraform-aws-vpc.git?ref=v1.0.0"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
@@ -26,7 +26,7 @@ module "vpc" {
 ## A subnet is a range of IP addresses in your VPC.
 ##========================================================================
 module "public_subnets" {
-  source             = "git@github.com:opz0/terraform-aws-subnet.git"
+  source             = "git::git@github.com:opz0/terraform-aws-subnet.git?ref=v1.0.0"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
@@ -39,7 +39,7 @@ module "public_subnets" {
 }
 
 module "iam-role" {
-  source             = "git@github.com:opz0/terraform-aws-iam-role.git"
+  source             = "git::git@github.com:opz0/terraform-aws-iam-role.git?ref=v1.0.0"
   name               = "iam-role"
   environment        = local.environment
   label_order        = local.label_order
@@ -76,14 +76,9 @@ data "aws_iam_policy_document" "iam-policy" {
 ## Terraform module to create ec2 instance module on AWS.
 ##=====================================================================================
 module "ec2" {
-  source      = "./../../."
-  name        = "ec2"
-  environment = local.environment
-
-  ##-==================================================================================
-  ## Below A security group controls the traffic that is allowed to reach and leave the resources that it is associated with.
-  ##-==================================================================================
-  #tfsec:aws-ec2-no-public-ingress-sgr
+  source            = "./../../."
+  name              = "ec2"
+  environment       = local.environment
   vpc_id            = module.vpc.id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]

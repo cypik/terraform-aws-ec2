@@ -1,3 +1,4 @@
+#!/bin/bash
 # Create the mount point directory if it doesn't exist
 sudo mkdir -p "$mount_point"
 

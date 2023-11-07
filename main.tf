@@ -2,7 +2,7 @@
 ## Labels module callled that will be used for naming and tags.
 ##==================================================================================
 module "labels" {
-  source      = "git::git@github.com:opz0/terraform-aws-labels.git?ref=master"
+  source      = "git::https://github.com/opz0/terraform-aws-labels.git?ref=v1.0.0"
   name        = var.name
   repository  = var.repository
   environment = var.environment
@@ -30,6 +30,7 @@ resource "tls_private_key" "default" {
   count     = var.enable && var.public_key == "" && var.enable_key_pair ? 1 : 0
   algorithm = var.algorithm
   rsa_bits  = var.rsa_bits
+
 }
 
 resource "aws_key_pair" "default" {
@@ -57,6 +58,7 @@ resource "aws_security_group" "default" {
 ##==================================================================================
 ## Below resources will create SECURITY-GROUP-RULE and its components.
 ##==================================================================================
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group_rule" "egress_ipv4" {
   count             = (var.enable && var.enable_security_group && length(var.sg_ids) < 1 && var.is_external == false && var.egress_rule) ? 1 : 0
   description       = var.sg_egress_description
@@ -78,6 +80,7 @@ resource "aws_security_group_rule" "egress_ipv6" {
   ipv6_cidr_blocks  = var.egress_ipv6_cidr_block
   security_group_id = join("", aws_security_group.default[*].id)
 }
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group_rule" "ssh_ingress" {
   count             = var.enable && length(var.ssh_allowed_ip) > 0 && length(var.sg_ids) < 1 ? length(compact(var.ssh_allowed_ports)) : 0
   description       = var.ssh_sg_ingress_description
@@ -88,6 +91,7 @@ resource "aws_security_group_rule" "ssh_ingress" {
   cidr_blocks       = var.ssh_allowed_ip
   security_group_id = join("", aws_security_group.default[*].id)
 }
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group_rule" "ingress" {
   count = var.enable && length(var.allowed_ip) > 0 && length(var.sg_ids) < 1 ? length(compact(var.allowed_ports)) : 0
 
