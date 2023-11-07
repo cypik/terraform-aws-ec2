@@ -491,12 +491,6 @@ variable "public_key" {
   sensitive   = true
 }
 
-variable "key_path" {
-  type        = string
-  default     = ""
-  description = "Name  (e.g. `~/.ssh/id_rsa.pub`)."
-}
-
 ###### spot
 variable "spot_instance_enabled" {
   type        = bool

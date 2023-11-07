@@ -15,8 +15,9 @@ This Terraform module is designed to provision AWS resources using the AWS provi
 
 ## Usage
 To use this module, you should have Terraform installed and configured for AWS. This module provides the necessary Terraform configuration for creating AWS resources, and you can customize the inputs as needed. Below is an example of how to use this module:
+# Examples
 
-- # default
+# Example: default
 
 ```hcl
 # Create EC2 instances
@@ -64,7 +65,7 @@ module "ec2" {
 
 This example demonstrates how to create various AWS resources using the provided modules. Adjust the input values to suit your specific requirements.
 
-- # spot_instance
+ # Example: spot_instance
 
 ```hcl
 module "spot-ec2" {

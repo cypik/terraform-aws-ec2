@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 locals {
-  environment = "app-test"
+  environment = "test-app"
   label_order = ["name", "environment"]
 }
 
@@ -11,12 +11,12 @@ locals {
 ## A subnet is a range of IP addresses in your VPC.
 ##========================================================================
 module "public_subnets" {
-  source             = "git@github.com:opz0/terraform-aws-subnet.git"
+  source             = "git::git@github.com:opz0/terraform-aws-subnet.git?ref=v1.0.0"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
   availability_zones = ["eu-west-1b", "eu-west-1c"]
-  vpc_id             = module.vpc.vpc_id
+  vpc_id             = module.vpc.id
   cidr_block         = module.vpc.vpc_cidr_block
   type               = "public"
   igw_id             = module.vpc.igw_id
@@ -27,7 +27,7 @@ module "public_subnets" {
 ## A VPC is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
 ##=====================================================================================
 module "vpc" {
-  source      = "git::git@github.com:opz0/terraform-aws-vpc.git?ref=master"
+  source      = "git::git@github.com:opz0/terraform-aws-vpc.git?ref=v1.0.0"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
@@ -45,7 +45,7 @@ module "spot-ec2" {
   ##======================================================================================
   ## Below A security group controls the traffic that is allowed to reach and leave the resources that it is associated with.
   ##======================================================================================
-  vpc_id            = module.vpc.vpc_id
+  vpc_id            = module.vpc.id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
 
