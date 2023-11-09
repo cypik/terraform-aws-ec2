@@ -135,7 +135,7 @@ The module may also provide output variables that can be used in other parts of 
 You can find more usage examples and configurations in the source code of each module, which are available
 
 ## License
-This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/opz0/terraform-aws-ec2/blob/readme/LICENSE) file for more details.
+This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/opz0/terraform-aws-ec2/blob/master/LICENSE) file for more details.
 
 ## Author
 Your Name
