@@ -138,7 +138,7 @@ variable "assign_eip_address" {
 
 variable "ebs_iops" {
   type        = number
-  default     = 0
+  default     = 3000
   description = "Amount of provisioned IOPS. This must be set with a volume_type of io1."
 }
 
