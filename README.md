@@ -15,6 +15,7 @@ This Terraform module is designed to provision AWS resources using the AWS provi
 
 ## Usage
 To use this module, you should have Terraform installed and configured for AWS. This module provides the necessary Terraform configuration for creating AWS resources, and you can customize the inputs as needed. Below is an example of how to use this module:
+
 # Examples
 
 # Example: default
@@ -22,7 +23,7 @@ To use this module, you should have Terraform installed and configured for AWS. 
 ```hcl
 # Create EC2 instances
 module "ec2" {
-  source      = "git::https://github.com/opz0/terraform-aws-ec2.git?ref=v1.0.0"
+  source      = "git::https://github.com/cypik/terraform-aws-ec2.git?ref=v1.0.0"
   name        = "ec2"
   environment = local.environment
 
@@ -69,7 +70,7 @@ This example demonstrates how to create various AWS resources using the provided
 
 ```hcl
 module "spot-ec2" {
-  source      = "git::https://github.com/opz0/terraform-aws-ec2.git?ref=v1.0.0"
+  source      = "git::https://github.com/cypik/terraform-aws-ec2.git?ref=v1.0.0"
   name        = "ec2"
   environment = "test"
 
@@ -132,10 +133,10 @@ This example demonstrates how to create various AWS resources using the provided
 The module may also provide output variables that can be used in other parts of your Terraform configuration. These output variables may include resource identifiers or other useful information. Refer to the module source code to identify available output variables.
 
 ## Examples
-You can find more usage examples and configurations in the source code of each module, which are available
+For detailed examples on how to use this module, please refer to the [Examples](https://github.com/cypik/terraform-aws-ec2/tree/master/example) directory within this repository.
 
 ## License
-This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/opz0/terraform-aws-ec2/blob/master/LICENSE) file for more details.
+This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/cypik/terraform-aws-ec2/blob/master/LICENSE) file for more details.
 
 ## Author
 Your Name
