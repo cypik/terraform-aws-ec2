@@ -333,7 +333,7 @@ variable "kms_key_id" {
 
 variable "alias" {
   type        = string
-  default     = "alias/ec2-test"
+  default     = ""
   description = "The display name of the alias. The name must start with the word `alias` followed by a forward slash."
 }
 
