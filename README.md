@@ -23,7 +23,7 @@ To use this module, you should have Terraform installed and configured for AWS. 
 ```hcl
 # Create EC2 instances
 module "ec2" {
-  source      = "git::https://github.com/cypik/terraform-aws-ec2.git?ref=v1.0.0"
+  source      = "git::https://github.com/cypik/terraform-aws-ec2.git?ref=v1.0.1"
   name        = "ec2"
   environment = local.environment
 
@@ -73,10 +73,6 @@ module "spot-ec2" {
   source      = "git::https://github.com/cypik/terraform-aws-ec2.git?ref=v1.0.0"
   name        = "ec2"
   environment = "test"
-
-  ##======================================================================================
-  ## Below A security group controls the traffic that is allowed to reach and leave the resources that it is associated with.
-  ##======================================================================================
   vpc_id            = module.vpc.vpc_id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
