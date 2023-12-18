@@ -42,8 +42,8 @@ variable "tags" {
 
 variable "managedby" {
   type        = string
-  default     = ""
-  description = ""
+  default     = "cypik"
+  description = "ManagedBy, eg 'cypik'."
 }
 
 variable "enable" {
@@ -214,7 +214,6 @@ variable "network_interface" {
   type        = list(map(string))
   default     = []
 }
-
 
 variable "host_id" {
   type        = string
