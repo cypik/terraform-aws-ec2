@@ -70,7 +70,7 @@ This example demonstrates how to create various AWS resources using the provided
 
 ```hcl
 module "spot-ec2" {
-  source      = "git::https://github.com/cypik/terraform-aws-ec2.git?ref=v1.0.0"
+  source      = "git::https://github.com/cypik/terraform-aws-ec2.git?ref=v1.0.1"
   name        = "ec2"
   environment = "test"
   vpc_id            = module.vpc.vpc_id
