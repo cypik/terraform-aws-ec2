@@ -7,6 +7,16 @@ locals {
   label_order = ["name", "environment"]
 }
 
+module "vpc" {
+  source      = "cypik/vpc/aws"
+  version     = "1.0.1"
+  name        = "app"
+  environment = local.environment
+  label_order = local.label_order
+  cidr_block  = "172.16.0.0/16"
+}
+
+
 module "public_subnets" {
   source             = "cypik/subnet/aws"
   version            = "1.0.1"
@@ -21,14 +31,6 @@ module "public_subnets" {
   ipv6_cidr_block    = module.vpc.ipv6_cidr_block
 }
 
-module "vpc" {
-  source      = "cypik/vpc/aws"
-  version     = "1.0.1"
-  name        = "app"
-  environment = local.environment
-  label_order = local.label_order
-  cidr_block  = "172.16.0.0/16"
-}
 
 module "spot-ec2" {
   source      = "./../../."
