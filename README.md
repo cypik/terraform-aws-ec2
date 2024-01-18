@@ -1,6 +1,6 @@
 # Terraform-aws-ec2
 
-# Terraform AWS Cloud ec2 Module
+# Terraform AWS Cloud EC2 Module
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -12,7 +12,7 @@
 - [Outputs](#outputs)
 
 ## Introduction
-This Terraform module creates an AWS Elastic Compute Cloud (ec2) along with additional configuration options.
+This Terraform module creates an AWS Elastic Compute Cloud (EC2) along with additional configuration options.
 ## Usage
 To use this module, you should have Terraform installed and configured for AWS. This module provides the necessary Terraform configuration for creating AWS resources, and you can customize the inputs as needed. Below is an example of how to use this module:
 
@@ -143,7 +143,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_labels"></a> [labels](#module\_labels) | git::https://github.com/cypik/terraform-aws-labels.git | v1.0.0 |
+| <a name="module_labels"></a> [labels](#module\_labels) | cypik/labels/aws | 1.0.1 |
 
 ## Resources
 

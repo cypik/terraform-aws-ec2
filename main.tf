@@ -2,7 +2,8 @@
 ## Labels module callled that will be used for naming and tags.
 ##==================================================================================
 module "labels" {
-  source      = "git::https://github.com/cypik/terraform-aws-labels.git?ref=v1.0.0"
+  source      = "cypik/labels/aws"
+  version     = "1.0.1"
   name        = var.name
   repository  = var.repository
   environment = var.environment
@@ -23,9 +24,6 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"]
 }
 
-##===================================================================================
-## resource for generating or importing an SSH public key file into AWS.
-##===================================================================================
 resource "tls_private_key" "default" {
   count     = var.enable && var.public_key == "" && var.enable_key_pair ? 1 : 0
   algorithm = var.algorithm
