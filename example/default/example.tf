@@ -1,7 +1,3 @@
-##==================================================================
-## Provider block added, Use the Amazon Web Services (AWS) provider to interact with the many resources supported by AWS.
-##====================================================================
-
 provider "aws" {
   region = "eu-west-1"
 }
@@ -11,22 +7,18 @@ locals {
   label_order = ["name", "environment"]
 }
 
-##======================================================================================
-## A VPC is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
-##=====================================================================================
 module "vpc" {
-  source      = "git::https://github.com/cypik/terraform-aws-vpc.git?ref=v1.0.0"
+  source      = "cypik/vpc/aws"
+  version     = "1.0.1"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
   cidr_block  = "172.16.0.0/16"
 }
 
-##=======================================================================
-## A subnet is a range of IP addresses in your VPC.
-##========================================================================
-module "public_subnets" {
-  source             = "git::https://github.com/cypik/terraform-aws-subnet.git?ref=v1.0.0"
+module "subnet" {
+  source             = "cypik/subnet/aws"
+  version            = "1.0.1"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
@@ -39,7 +31,8 @@ module "public_subnets" {
 }
 
 module "iam-role" {
-  source             = "git::https://github.com/cypik/terraform-aws-iam-role.git?ref=v1.0.0"
+  source             = "cypik/iam-role/aws"
+  version            = "1.0.1"
   name               = "iam-role"
   environment        = local.environment
   label_order        = local.label_order
@@ -72,9 +65,6 @@ data "aws_iam_policy_document" "iam-policy" {
   }
 }
 
-##=====================================================================================
-## Terraform module to create ec2 instance module on AWS.
-##=====================================================================================
 module "ec2" {
   source            = "./../../."
   name              = "ec2"
@@ -88,7 +78,7 @@ module "ec2" {
   instance_type  = "t2.micro"
 
   #Keypair
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC1lFi1nz4FyNSas+diEj8qji0p7rs7ewjz/OXMSQbUd7kxeX+nCNJKEC1rzOvmU67faDk3QNCsMg/DFlhz4vLb4/b4qFHGFgSaqk1WII95HAnnJECjEaQwClzgMcdQuiAxFm7ET3Em3p2cISguA5R0ynmxYDCnPbCHPiYjbgc+HPwIuqN9/pLL0moT6rPjq6yR6jrn3HuH8PTSP3A9HzStSeMCuTJDUwPpMHae4M0qxTXCQ/wvcWydOa5Hk+C8OcUfZfi7wtKyyUiG55u9RH4LzzLUqfQip1q+LkG3kH80SGsN6GZ+LKu0++xiBXWYD93mfnL51H4TdDejllt6FE/X7jf/RubFCUm0zFeB7762gMVytflmxYE/e8fwsqnnaOOgvdmLNbp0sES+qEdv9C8E8b61xbdhPMTFSd+1nuUG57KoMORsZoHGptg7i/QXs32pqlxftTqEschCpitGuBN4NxwybES6FdkYLXFZYWiv7uuujVlfxvN2mrkV3363ftc= satish@satish"
+  public_key = "XXXXXXXXXXXXXXXXXXXFZYWiv7uuujVlfxvN2mrkV3363ftc= satish@satish"
 
   #Networking
   subnet_ids = tolist(module.public_subnets.public_subnet_id)
