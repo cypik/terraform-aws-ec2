@@ -12,8 +12,7 @@
 - [Outputs](#outputs)
 
 ## Introduction
-This Terraform module is designed to provision AWS resources using the AWS provider. It includes the creation of a Virtual Private Cloud (VPC), public subnets, IAM roles, and EC2 instances. This module facilitates infrastructure as code (IaC) for AWS environments.
-
+This Terraform module creates an AWS Elastic Compute Cloud (ec2) along with additional configuration options.
 ## Usage
 To use this module, you should have Terraform installed and configured for AWS. This module provides the necessary Terraform configuration for creating AWS resources, and you can customize the inputs as needed. Below is an example of how to use this module:
 
