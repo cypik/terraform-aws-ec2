@@ -16,7 +16,6 @@ module "vpc" {
   cidr_block  = "172.16.0.0/16"
 }
 
-
 module "subnet" {
   source             = "cypik/subnet/aws"
   version            = "1.0.1"
