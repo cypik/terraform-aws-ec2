@@ -40,10 +40,6 @@ resource "aws_key_pair" "default" {
   tags       = module.labels.tags
 }
 
-
-##==================================================================================
-## Below resources will create SECURITY-GROUP and its components.
-##==================================================================================
 resource "aws_security_group" "default" {
   count       = var.enable && var.enable_security_group && length(var.sg_ids) < 1 ? 1 : 0
   name        = format("%s-ec2-sg", module.labels.id)
@@ -55,9 +51,6 @@ resource "aws_security_group" "default" {
   }
 }
 
-##==================================================================================
-## Below resources will create SECURITY-GROUP-RULE and its components.
-##==================================================================================
 #tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group_rule" "egress_ipv4" {
   count             = (var.enable && var.enable_security_group && length(var.sg_ids) < 1 && var.is_external == false && var.egress_rule) ? 1 : 0
@@ -104,9 +97,6 @@ resource "aws_security_group_rule" "ingress" {
   security_group_id = join("", aws_security_group.default[*].id)
 }
 
-##===================================================================================
-## Below resources will create KMS-KEY and its components.
-##===================================================================================
 resource "aws_kms_key" "default" {
   count                    = var.enable && var.kms_key_enabled && var.kms_key_id == "" ? 1 : 0
   description              = var.kms_description
@@ -141,9 +131,6 @@ data "aws_iam_policy_document" "kms" {
 
 }
 
-##==================================================================================
-## Below Terraform module to create an EC2 resource on AWS with Elastic IP Addresses and Elastic Block Store.
-##==================================================================================
 resource "aws_instance" "default" {
   count                                = var.enable && var.default_instance_enabled ? var.instance_count : 0
   ami                                  = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
@@ -300,9 +287,6 @@ resource "aws_instance" "default" {
   }
 }
 
-##==================================================================================
-## Provides an Elastic IP resource..
-##==================================================================================
 resource "aws_eip" "default" {
   count             = var.enable && var.assign_eip_address ? var.instance_count : 0
   network_interface = element(aws_instance.default[*].primary_network_interface_id, count.index)
@@ -314,9 +298,6 @@ resource "aws_eip" "default" {
   )
 }
 
-##===================================================================================
-## Manages a single EBS volume.
-##===================================================================================
 resource "aws_ebs_volume" "default" {
   count                = var.enable && var.ebs_volume_enabled ? var.instance_count : 0
   availability_zone    = element(aws_instance.default[*].availability_zone, count.index)
@@ -334,9 +315,6 @@ resource "aws_ebs_volume" "default" {
   depends_on = [aws_instance.default]
 }
 
-##=============================================================================
-## Provides an AWS EBS Volume Attachment as a top level resource, to attach and detach volumes from AWS Instances.
-##=============================================================================
 resource "aws_volume_attachment" "default" {
   count       = var.enable && var.ebs_volume_enabled ? var.instance_count : 0
   device_name = element(var.ebs_device_name, count.index)
@@ -345,18 +323,12 @@ resource "aws_volume_attachment" "default" {
   depends_on  = [aws_instance.default]
 }
 
-##==============================================================================
-## Provides an IAM instance profile.
-##==============================================================================
 resource "aws_iam_instance_profile" "default" {
   count = var.enable && var.instance_profile_enabled ? 1 : 0
   name  = format("%s%sinstance-profile", module.labels.id, var.delimiter)
   role  = var.iam_instance_profile
 }
 
-##=================================================================================
-## Below resource will create ROUTE-53 resource for memcached.
-##=================================================================================
 resource "aws_route53_record" "default" {
   count   = var.enable && var.dns_enabled ? var.instance_count : 0
   zone_id = var.dns_zone_id
@@ -366,9 +338,6 @@ resource "aws_route53_record" "default" {
   records = [element(aws_instance.default[*].private_dns, count.index)]
 }
 
-##==================================================================================
-## Below Provides an EC2 Spot Instance Request resource. This allows instances to be requested on the spot market..
-##===================================================================================
 resource "aws_spot_instance_request" "default" {
   count                                = var.enable && var.spot_instance_enabled ? var.spot_instance_count : 0
   spot_price                           = var.spot_price

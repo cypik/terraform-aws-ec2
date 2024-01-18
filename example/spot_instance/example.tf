@@ -7,11 +7,9 @@ locals {
   label_order = ["name", "environment"]
 }
 
-##=======================================================================
-## A subnet is a range of IP addresses in your VPC.
-##========================================================================
 module "public_subnets" {
-  source             = "git::https://github.com/cypik/terraform-aws-subnet.git?ref=v1.0.0"
+  source             = "cypik/subnet/aws"
+  version            = "1.0.1"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
@@ -23,34 +21,26 @@ module "public_subnets" {
   ipv6_cidr_block    = module.vpc.ipv6_cidr_block
 }
 
-##======================================================================================
-## A VPC is a virtual network that closely resembles a traditional network that you'd operate in your own data center.
-##=====================================================================================
 module "vpc" {
-  source      = "git::https://github.com/cypik/terraform-aws-vpc.git?ref=v1.0.0"
+  source      = "cypik/vpc/aws"
+  version     = "1.0.1"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
   cidr_block  = "172.16.0.0/16"
 }
 
-##=====================================================================
-## Terraform module to create spot instance module on AWS.
-##=====================================================================
 module "spot-ec2" {
   source      = "./../../."
   name        = "ec2"
   environment = "test"
 
-  ##======================================================================================
-  ## Below A security group controls the traffic that is allowed to reach and leave the resources that it is associated with.
-  ##======================================================================================
   vpc_id            = module.vpc.id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
 
   #Keypair
-  public_key = "ssh-ejllt6FE/X7jf/RubFCUm0zFeB7762gMVytflmxYE/e8fwsqnnaOOgvdmLNbp0sES+qEdv9C8E8b61xbdhPMTFSd+1nuUG57KoMORsZoHGptg7i/QXs32pqlxftTqEschCpitGuBN4NxwybES6FdkYLXFZYWiv7uuujVlfxvN2mrkV3363ftc= satish@satish"
+  public_key = "ssh-ejlxxxxxxxxxxxxxx4NxwybES6FdkYLXFZYWiv7uuujVlfxvN2mrkV3363ftc= satish@satish"
 
   # Spot-instance
   spot_price                          = "0.3"
