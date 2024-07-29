@@ -84,14 +84,14 @@ resource "aws_security_group_rule" "ssh_ingress" {
 }
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group_rule" "ingress" {
-  count = var.enable && length(var.allowed_ip) > 0 && length(var.sg_ids) < 1 ? length(compact(var.allowed_ports)) : 0
+  for_each = var.allow_ingress_port_ip
 
   description       = var.sg_ingress_description
   type              = "ingress"
-  from_port         = element(var.allowed_ports, count.index)
-  to_port           = element(var.allowed_ports, count.index)
+  from_port         = each.key
+  to_port           = each.key
   protocol          = var.protocol
-  cidr_blocks       = var.allowed_ip
+  cidr_blocks       = [each.value]
   security_group_id = join("", aws_security_group.default[*].id)
 }
 

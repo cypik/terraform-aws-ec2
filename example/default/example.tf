@@ -78,7 +78,7 @@ module "ec2" {
   instance_type  = "t2.micro"
 
   #Keypair
-  public_key = "XXXXXXXXXXXXXXXXXXXFZYWiv7uuujVlfxvN2mrkV3363ftc= satish@satish"
+  public_key = "XXXXXXXXXXXXXXXXXXXFZYWiv7uuujVlfxvN2mrkV3363ftc= baldev@baldev"
 
   #Networking
   subnet_ids = tolist(module.public_subnets.public_subnet_id)

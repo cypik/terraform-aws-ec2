@@ -410,6 +410,16 @@ variable "enable_security_group" {
   description = "Enable default Security Group with only Egress traffic allowed."
 }
 
+variable "allow_ingress_port_ip" {
+  description = "Map of ports to their respective IP ranges"
+  type        = map(string)
+  default = {
+    "80"  = "0.0.0.0/0"
+    "443" = "0.0.0.0/0"
+    "2049" = "10.20.0.0/16"
+  }
+}
+
 variable "egress_rule" {
   type        = bool
   default     = true
