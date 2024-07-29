@@ -386,18 +386,6 @@ variable "vpc_id" {
   sensitive   = true
 }
 
-variable "allowed_ip" {
-  type        = list(any)
-  default     = ["0.0.0.0/0"]
-  description = "List of allowed ip."
-}
-
-variable "allowed_ports" {
-  type        = list(any)
-  default     = [80, 443]
-  description = "List of allowed ingress ports"
-}
-
 variable "protocol" {
   type        = string
   default     = "tcp"
@@ -414,8 +402,8 @@ variable "allow_ingress_port_ip" {
   description = "Map of ports to their respective IP ranges"
   type        = map(string)
   default = {
-    "80"  = "0.0.0.0/0"
-    "443" = "0.0.0.0/0"
+    "80"   = "0.0.0.0/0"
+    "443"  = "0.0.0.0/0"
     "2049" = "10.20.0.0/16"
   }
 }
@@ -459,12 +447,6 @@ variable "sg_ingress_description" {
   type        = string
   default     = "Description of the ingress rule use elasticache."
   description = "Description of the ingress rule"
-}
-
-variable "ssh_allowed_ip" {
-  type        = list(any)
-  default     = []
-  description = "List of allowed ip."
 }
 
 variable "ssh_allowed_ports" {
