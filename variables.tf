@@ -408,6 +408,12 @@ variable "allow_ingress_port_ip" {
   }
 }
 
+variable "ssh_allowed_ip" {
+  type        = list(any)
+  default     = []
+  description = "List of allowed ip."
+}
+
 variable "egress_rule" {
   type        = bool
   default     = true

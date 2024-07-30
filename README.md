@@ -24,7 +24,7 @@ To use this module, you should have Terraform installed and configured for AWS. 
 # Create EC2 instances
 module "ec2" {
   source      = "cypik/ec2/aws"
-  version     = "1.0.2"
+  version     = "1.0.3"
   name        = "ec2"
   environment = local.environment
 
@@ -32,6 +32,12 @@ module "ec2" {
   vpc_id            = module.vpc.id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
+  
+  ##allow ingress port and ip
+  allow_ingress_port_ip = {
+    "80"   = "0.0.0.0/0"
+    "443"  = "0.0.0.0/0"
+  }
   instance_count    = 1
   ami               = "ami-01dd271720c1ba44f"
   instance_type     = "t2.micro"
@@ -60,8 +66,6 @@ module "ec2" {
   # Tags
   instance_tags = { "snapshot" = true }
 
-  # Mount EBS With User Data
-  user_data = file("user-data.sh")
 }
 ```
 
@@ -72,12 +76,18 @@ This example demonstrates how to create various AWS resources using the provided
 ```hcl
 module "spot-ec2" {
   source      = "cypik/ec2/aws"
-  version     = "1.0.2"
+  version     = "1.0.3"
   name        = "ec2"
   environment = "test"
   vpc_id            = module.vpc.vpc_id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
+
+  ##allow ingress port and ip
+  allow_ingress_port_ip = {
+    "80"   = "0.0.0.0/0"
+    "443"  = "0.0.0.0/0"
+  }
 
   #Keypair
   public_key = "ssh-rsa /XXXXXXXXXXXXX"
@@ -270,6 +280,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_spot_valid_from"></a> [spot\_valid\_from](#input\_spot\_valid\_from) | The start date and time of the request, in UTC RFC3339 format(for example, YYYY-MM-DDTHH:MM:SSZ) | `string` | `null` | no |
 | <a name="input_spot_valid_until"></a> [spot\_valid\_until](#input\_spot\_valid\_until) | The end date and time of the request, in UTC RFC3339 format(for example, YYYY-MM-DDTHH:MM:SSZ) | `string` | `null` | no |
 | <a name="input_spot_wait_for_fulfillment"></a> [spot\_wait\_for\_fulfillment](#input\_spot\_wait\_for\_fulfillment) | If set, Terraform will wait for the Spot Request to be fulfilled, and will throw an error if the timeout of 10m is reached | `bool` | `false` | no |
+| <a name="input_ssh_allowed_ip"></a> [ssh\_allowed\_ip](#input\_ssh\_allowed\_ip) | List of allowed ip. | `list(any)` | `[]` | no |
 | <a name="input_ssh_allowed_ports"></a> [ssh\_allowed\_ports](#input\_ssh\_allowed\_ports) | List of allowed ingress ports | `list(any)` | `[]` | no |
 | <a name="input_ssh_protocol"></a> [ssh\_protocol](#input\_ssh\_protocol) | The protocol. If not icmp, tcp, udp, or all use the. | `string` | `"tcp"` | no |
 | <a name="input_ssh_sg_ingress_description"></a> [ssh\_sg\_ingress\_description](#input\_ssh\_sg\_ingress\_description) | Description of the ingress rule | `string` | `"Description of the ingress rule use elasticache."` | no |
