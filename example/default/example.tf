@@ -66,19 +66,26 @@ data "aws_iam_policy_document" "iam-policy" {
 }
 
 module "ec2" {
-  source            = "./../../."
+  source            = "./../../"
   name              = "ec2"
   environment       = local.environment
   vpc_id            = module.vpc.id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
+
+  ###allow ingress port and ip
+  allow_ingress_port_ip = {
+    "80"  = "0.0.0.0/0"
+    "443" = "0.0.0.0/0"
+  }
+
   #Instance
   instance_count = 1
   ami            = "ami-01dd271720c1ba44f"
   instance_type  = "t2.micro"
 
   #Keypair
-  public_key = "XXXXXXXXXXXXXXXXXXXFZYWiv7uuujVlfxvN2mrkV3363ftc= satish@satish"
+  public_key = "XXXXXXXXXXXXXXXXXXXFZYWiv7uuujVlfxvN2mrkV3363ftc= baldev@baldev"
 
   #Networking
   subnet_ids = tolist(module.public_subnets.public_subnet_id)
@@ -103,6 +110,4 @@ module "ec2" {
   #Tags
   instance_tags = { "snapshot" = true }
 
-  #Mount EBS With User Data
-  user_data = file("user-data.sh")
 }

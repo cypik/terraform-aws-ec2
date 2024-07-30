@@ -24,7 +24,7 @@ To use this module, you should have Terraform installed and configured for AWS. 
 # Create EC2 instances
 module "ec2" {
   source      = "cypik/ec2/aws"
-  version     = "1.0.2"
+  version     = "1.0.3"
   name        = "ec2"
   environment = local.environment
 
@@ -32,6 +32,12 @@ module "ec2" {
   vpc_id            = module.vpc.id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
+
+  ##allow ingress port and ip
+  allow_ingress_port_ip = {
+    "80"   = "0.0.0.0/0"
+    "443"  = "0.0.0.0/0"
+  }
   instance_count    = 1
   ami               = "ami-01dd271720c1ba44f"
   instance_type     = "t2.micro"
@@ -60,8 +66,6 @@ module "ec2" {
   # Tags
   instance_tags = { "snapshot" = true }
 
-  # Mount EBS With User Data
-  user_data = file("user-data.sh")
 }
 ```
 
@@ -72,12 +76,18 @@ This example demonstrates how to create various AWS resources using the provided
 ```hcl
 module "spot-ec2" {
   source      = "cypik/ec2/aws"
-  version     = "1.0.2"
+  version     = "1.0.3"
   name        = "ec2"
   environment = "test"
   vpc_id            = module.vpc.vpc_id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
+
+  ##allow ingress port and ip
+  allow_ingress_port_ip = {
+    "80"   = "0.0.0.0/0"
+    "443"  = "0.0.0.0/0"
+  }
 
   #Keypair
   public_key = "ssh-rsa /XXXXXXXXXXXXX"
@@ -174,8 +184,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 |------|-------------|------|---------|:--------:|
 | <a name="input_algorithm"></a> [algorithm](#input\_algorithm) | Name of the algorithm to use when generating the private key. Currently-supported values are: RSA, ECDSA, ED25519. | `string` | `"RSA"` | no |
 | <a name="input_alias"></a> [alias](#input\_alias) | The display name of the alias. The name must start with the word `alias` followed by a forward slash. | `string` | `""` | no |
-| <a name="input_allowed_ip"></a> [allowed\_ip](#input\_allowed\_ip) | List of allowed ip. | `list(any)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
-| <a name="input_allowed_ports"></a> [allowed\_ports](#input\_allowed\_ports) | List of allowed ingress ports | `list(any)` | <pre>[<br>  80,<br>  443<br>]</pre> | no |
+| <a name="input_allow_ingress_port_ip"></a> [allow\_ingress\_port\_ip](#input\_allow\_ingress\_port\_ip) | Map of ports to their respective IP ranges | `map(string)` | <pre>{<br>  "2049": "10.20.0.0/16",<br>  "443": "0.0.0.0/0",<br>  "80": "0.0.0.0/0"<br>}</pre> | no |
 | <a name="input_ami"></a> [ami](#input\_ami) | The AMI to use for the instance. | `string` | `""` | no |
 | <a name="input_assign_eip_address"></a> [assign\_eip\_address](#input\_assign\_eip\_address) | Assign an Elastic IP address to the instance. | `bool` | `true` | no |
 | <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | Associate a public IP address with the instance. | `bool` | `true` | no |

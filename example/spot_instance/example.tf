@@ -41,8 +41,14 @@ module "spot-ec2" {
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
 
+  ###allow ingress port and ip
+  allow_ingress_port_ip = {
+    "80"  = "0.0.0.0/0"
+    "443" = "0.0.0.0/0"
+  }
+
   #Keypair
-  public_key = "ssh-ejlxxxxxxxxxxxxxx4NxwybES6FdkYLXFZYWiv7uuujVlfxvN2mrkV3363ftc= satish@satish"
+  public_key = "ssh-ejlxxxxxxxxxxxxxx4NxwybES6FdkYLXFZYWiv7uuujVlfxvN2mrkV3363ftc= baldev@baldev"
 
   # Spot-instance
   spot_price                          = "0.3"
