@@ -146,8 +146,8 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.60.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.5 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.32.1 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | >= 2.0.0 |
 
 ## Modules
 
