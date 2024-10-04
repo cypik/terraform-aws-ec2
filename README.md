@@ -23,33 +23,35 @@ To use this module, you should have Terraform installed and configured for AWS. 
 ```hcl
 # Create EC2 instances
 module "ec2" {
-  source      = "cypik/ec2/aws"
-  version     = "1.0.3"
-  name        = "ec2"
-  environment = local.environment
-
-  # Define security group and instance details
-  vpc_id            = module.vpc.id
+  source            = "cypik/ec2/aws"
+  version           = "1.0.4"
+  name              = "ec2"
+  environment       = local.environment
+  vpc_id            = module.vpc.vpc_id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
 
-  ##allow ingress port and ip
+  ###allow ingress port and ip
   allow_ingress_port_ip = {
-    "80"   = "0.0.0.0/0"
-    "443"  = "0.0.0.0/0"
+    "80"  = "0.0.0.0/0"
+    "443" = "0.0.0.0/0"
   }
-  instance_count    = 1
-  ami               = "ami-01dd271720c1ba44f"
-  instance_type     = "t2.micro"
-  public_key        = "ssh-rsa AAxxxxxxxxxxxxxxxxuuujVlfxvN2mrkV3363ftc= satish@satish"
 
-  # Networking
+  #Instance
+  instance_count = 1
+  ami            = "ami-01dd271720c1ba44f"
+  instance_type  = "t2.micro"
+
+  #Keypair
+  public_key = "ssh-rsa ABuCc9UCUiQlNvHqjhz+Iy4fn3lsvengN7ennvhhDRRDRjH+gVk= "
+
+  #Networking
   subnet_ids = tolist(module.public_subnets.public_subnet_id)
 
-  # IAM
+  #IAM
   iam_instance_profile = module.iam-role.name
 
-  # Root Volume
+  #Root Volume
   root_block_device = [
     {
       volume_type           = "gp2"
@@ -58,12 +60,12 @@ module "ec2" {
     }
   ]
 
-  # EBS Volume
+  #EBS Volume
   ebs_volume_enabled = true
   ebs_volume_type    = "gp2"
   ebs_volume_size    = 30
 
-  # Tags
+  #Tags
   instance_tags = { "snapshot" = true }
 
 }
@@ -75,23 +77,24 @@ This example demonstrates how to create various AWS resources using the provided
 
 ```hcl
 module "spot-ec2" {
-  source      = "cypik/ec2/aws"
-  version     = "1.0.3"
-  name        = "ec2"
-  environment = "test"
+  source            = "cypik/ec2/aws"
+  version           = "1.0.3"
+  name              = "ec2"
+  environment       = "test"
   vpc_id            = module.vpc.vpc_id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
 
-  ##allow ingress port and ip
+  ###allow ingress port and ip
   allow_ingress_port_ip = {
-    "80"   = "0.0.0.0/0"
-    "443"  = "0.0.0.0/0"
+    "80"  = "0.0.0.0/0"
+    "443" = "0.0.0.0/0"
   }
 
   #Keypair
-  public_key = "ssh-rsa /XXXXXXXXXXXXX"
-  # Spot-instance"
+  public_key = "ssh-rsa AAAAjjiK9yDJmxwiw7ZNRrs525oqk5uJfXkHmOcIvfeRhnLBg84Eqvqdu5hhDRRDRjH+gVk="
+
+  # Spot-instance
   spot_price                          = "0.3"
   spot_wait_for_fulfillment           = true
   spot_type                           = "persistent"
@@ -138,22 +141,22 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.6 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.32.1 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.5 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=5.67.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 2.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.32.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >=5.67.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | >= 2.0.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_labels"></a> [labels](#module\_labels) | cypik/labels/aws | 1.0.1 |
+| <a name="module_labels"></a> [labels](#module\_labels) | cypik/labels/aws | 1.0.2 |
 
 ## Resources
 
@@ -185,11 +188,13 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_algorithm"></a> [algorithm](#input\_algorithm) | Name of the algorithm to use when generating the private key. Currently-supported values are: RSA, ECDSA, ED25519. | `string` | `"RSA"` | no |
 | <a name="input_alias"></a> [alias](#input\_alias) | The display name of the alias. The name must start with the word `alias` followed by a forward slash. | `string` | `""` | no |
 | <a name="input_allow_ingress_port_ip"></a> [allow\_ingress\_port\_ip](#input\_allow\_ingress\_port\_ip) | Map of ports to their respective IP ranges | `map(string)` | <pre>{<br>  "2049": "10.20.0.0/16",<br>  "443": "0.0.0.0/0",<br>  "80": "0.0.0.0/0"<br>}</pre> | no |
+| <a name="input_allow_overwrite"></a> [allow\_overwrite](#input\_allow\_overwrite) | Allow creation of this record in Terraform to overwrite an existing record. | `bool` | `false` | no |
 | <a name="input_ami"></a> [ami](#input\_ami) | The AMI to use for the instance. | `string` | `""` | no |
 | <a name="input_assign_eip_address"></a> [assign\_eip\_address](#input\_assign\_eip\_address) | Assign an Elastic IP address to the instance. | `bool` | `true` | no |
 | <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | Associate a public IP address with the instance. | `bool` | `true` | no |
 | <a name="input_availability_zone"></a> [availability\_zone](#input\_availability\_zone) | AZ to start the instance in | `string` | `null` | no |
 | <a name="input_capacity_reservation_specification"></a> [capacity\_reservation\_specification](#input\_capacity\_reservation\_specification) | Describes an instance's Capacity Reservation targeting option | `any` | `{}` | no |
+| <a name="input_cidr_routing_policy"></a> [cidr\_routing\_policy](#input\_cidr\_routing\_policy) | CIDR routing policy details. | `map(any)` | `{}` | no |
 | <a name="input_cpu_core_count"></a> [cpu\_core\_count](#input\_cpu\_core\_count) | Sets the number of CPU cores for an instance. | `string` | `null` | no |
 | <a name="input_cpu_credits"></a> [cpu\_credits](#input\_cpu\_credits) | The credit option for CPU usage. Can be `standard` or `unlimited`. T3 instances are launched as unlimited by default. T2 instances are launched as standard by default. | `string` | `"standard"` | no |
 | <a name="input_cpu_options"></a> [cpu\_options](#input\_cpu\_options) | Defines CPU options to apply to the instance at launch time. | `any` | `{}` | no |
@@ -198,6 +203,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_default_instance_enabled"></a> [default\_instance\_enabled](#input\_default\_instance\_enabled) | Flag to control the instance creation. | `bool` | `true` | no |
 | <a name="input_deletion_window_in_days"></a> [deletion\_window\_in\_days](#input\_deletion\_window\_in\_days) | Duration in days after which the key is deleted after destruction of the resource. | `number` | `7` | no |
 | <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | Delimiter to be used between `organization`, `environment`, `name` and `attributes`. | `string` | `"-"` | no |
+| <a name="input_disable_api_stop"></a> [disable\_api\_stop](#input\_disable\_api\_stop) | Whether to enable stopping the instance via the API | `bool` | `false` | no |
 | <a name="input_disable_api_termination"></a> [disable\_api\_termination](#input\_disable\_api\_termination) | If true, enables EC2 Instance Termination Protection. | `bool` | `false` | no |
 | <a name="input_dns_enabled"></a> [dns\_enabled](#input\_dns\_enabled) | Flag to control the dns\_enable. | `bool` | `false` | no |
 | <a name="input_dns_zone_id"></a> [dns\_zone\_id](#input\_dns\_zone\_id) | The Zone ID of Route53. | `string` | `"Z1XJD7SSBKXLC1"` | no |
@@ -213,6 +219,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_egress_ipv4_protocol"></a> [egress\_ipv4\_protocol](#input\_egress\_ipv4\_protocol) | Protocol. If not icmp, icmpv6, tcp, udp, or all use the protocol number | `string` | `"-1"` | no |
 | <a name="input_egress_ipv4_to_port"></a> [egress\_ipv4\_to\_port](#input\_egress\_ipv4\_to\_port) | Egress end port (or ICMP code if protocol is icmp). | `number` | `65535` | no |
 | <a name="input_egress_ipv6_cidr_block"></a> [egress\_ipv6\_cidr\_block](#input\_egress\_ipv6\_cidr\_block) | List of CIDR blocks. Cannot be specified with source\_security\_group\_id or self. | `list(string)` | <pre>[<br>  "::/0"<br>]</pre> | no |
+| <a name="input_egress_ipv6_cidr_blocks"></a> [egress\_ipv6\_cidr\_blocks](#input\_egress\_ipv6\_cidr\_blocks) | (Optional) List of IPv6 CIDR blocks to allow. | `list(string)` | `[]` | no |
 | <a name="input_egress_ipv6_from_port"></a> [egress\_ipv6\_from\_port](#input\_egress\_ipv6\_from\_port) | Egress Start port (or ICMP type number if protocol is icmp or icmpv6). | `number` | `0` | no |
 | <a name="input_egress_ipv6_protocol"></a> [egress\_ipv6\_protocol](#input\_egress\_ipv6\_protocol) | Protocol. If not icmp, icmpv6, tcp, udp, or all use the protocol number | `string` | `"-1"` | no |
 | <a name="input_egress_ipv6_to_port"></a> [egress\_ipv6\_to\_port](#input\_egress\_ipv6\_to\_port) | Egress end port (or ICMP code if protocol is icmp). | `number` | `65535` | no |
@@ -224,13 +231,21 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_enclave_options_enabled"></a> [enclave\_options\_enabled](#input\_enclave\_options\_enabled) | Whether Nitro Enclaves will be enabled on the instance. Defaults to `false` | `bool` | `null` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment (e.g. `prod`, `dev`, `staging`). | `string` | `""` | no |
 | <a name="input_ephemeral_block_device"></a> [ephemeral\_block\_device](#input\_ephemeral\_block\_device) | Customize Ephemeral (also known as Instance Store) volumes on the instance. | `list(any)` | `[]` | no |
+| <a name="input_failover_routing_policy"></a> [failover\_routing\_policy](#input\_failover\_routing\_policy) | Failover routing policy details. | `map(any)` | `{}` | no |
+| <a name="input_final_snapshot"></a> [final\_snapshot](#input\_final\_snapshot) | If true, a snapshot will be created before volume deletion (default is false) | `bool` | `false` | no |
+| <a name="input_force_detach"></a> [force\_detach](#input\_force\_detach) | Force detach the volume (default is false) | `bool` | `false` | no |
+| <a name="input_geolocation_routing_policy"></a> [geolocation\_routing\_policy](#input\_geolocation\_routing\_policy) | Geolocation routing policy details. | `map(any)` | `{}` | no |
+| <a name="input_geoproximity_routing_policy"></a> [geoproximity\_routing\_policy](#input\_geoproximity\_routing\_policy) | Geoproximity routing policy details. | `map(any)` | `{}` | no |
 | <a name="input_get_password_data"></a> [get\_password\_data](#input\_get\_password\_data) | If true, wait for password data to become available and retrieve it | `bool` | `null` | no |
+| <a name="input_health_check_id"></a> [health\_check\_id](#input\_health\_check\_id) | The health check ID for the DNS record. | `string` | `null` | no |
 | <a name="input_hibernation"></a> [hibernation](#input\_hibernation) | hibernate an instance, Amazon EC2 signals the operating system to perform hibernation. | `bool` | `false` | no |
 | <a name="input_host_id"></a> [host\_id](#input\_host\_id) | The Id of a dedicated host that the instance will be assigned to. Use when an instance is to be launched on a specific dedicated host. | `string` | `null` | no |
+| <a name="input_host_resource_group_arn"></a> [host\_resource\_group\_arn](#input\_host\_resource\_group\_arn) | ARN of the host resource group | `string` | `""` | no |
 | <a name="input_hostname"></a> [hostname](#input\_hostname) | DNS records to create. | `string` | `"ec2"` | no |
 | <a name="input_iam_instance_profile"></a> [iam\_instance\_profile](#input\_iam\_instance\_profile) | The IAM Instance Profile to launch the instance with. Specified as the name of the Instance Profile. | `string` | `""` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | Number of instances to launch. | `number` | `0` | no |
 | <a name="input_instance_initiated_shutdown_behavior"></a> [instance\_initiated\_shutdown\_behavior](#input\_instance\_initiated\_shutdown\_behavior) | n/a | `string` | `"terminate"` | no |
+| <a name="input_instance_market_options"></a> [instance\_market\_options](#input\_instance\_market\_options) | n/a | <pre>object({<br>    market_type = string<br>    spot_options = object({<br>      max_price                      = string<br>      spot_instance_type             = string<br>      instance_interruption_behavior = string<br>      valid_until                    = string<br>    })<br>  })</pre> | <pre>{<br>  "description": "Options for configuring instance market behavior",<br>  "market_type": null,<br>  "spot_options": {<br>    "instance_interruption_behavior": null,<br>    "max_price": null,<br>    "spot_instance_type": null,<br>    "valid_until": null<br>  }<br>}</pre> | no |
 | <a name="input_instance_metadata_tags_enabled"></a> [instance\_metadata\_tags\_enabled](#input\_instance\_metadata\_tags\_enabled) | Whether the metadata tag is available. Valid values include enabled or disabled. Defaults to enabled. | `string` | `"disabled"` | no |
 | <a name="input_instance_profile_enabled"></a> [instance\_profile\_enabled](#input\_instance\_profile\_enabled) | Flag to control the instance profile creation. | `bool` | `true` | no |
 | <a name="input_instance_tags"></a> [instance\_tags](#input\_instance\_tags) | Instance tags. | `map(any)` | `{}` | no |
@@ -246,29 +261,42 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The ARN of the key that you wish to use if encrypting at rest. If not supplied, uses service managed encryption. Can be specified only if at\_rest\_encryption\_enabled = true. | `string` | `""` | no |
 | <a name="input_kms_multi_region"></a> [kms\_multi\_region](#input\_kms\_multi\_region) | Indicates whether the KMS key is a multi-Region (true) or regional (false) key. | `bool` | `false` | no |
 | <a name="input_label_order"></a> [label\_order](#input\_label\_order) | Label order, e.g. `name`,`application`. | `list(any)` | <pre>[<br>  "name",<br>  "environment"<br>]</pre> | no |
+| <a name="input_latency_routing_policy"></a> [latency\_routing\_policy](#input\_latency\_routing\_policy) | Latency routing policy details. | `map(any)` | `{}` | no |
 | <a name="input_launch_template"></a> [launch\_template](#input\_launch\_template) | Specifies a Launch Template to configure the instance. Parameters configured on this resource will override the corresponding parameters in the Launch Template | `map(string)` | `{}` | no |
+| <a name="input_maintenance_options"></a> [maintenance\_options](#input\_maintenance\_options) | Options for instance maintenance | <pre>object({<br>    auto_recovery = string<br>  })</pre> | <pre>{<br>  "auto_recovery": null<br>}</pre> | no |
 | <a name="input_managedby"></a> [managedby](#input\_managedby) | ManagedBy, eg 'cypik'. | `string` | `"cypik"` | no |
 | <a name="input_metadata_http_endpoint_enabled"></a> [metadata\_http\_endpoint\_enabled](#input\_metadata\_http\_endpoint\_enabled) | Whether the metadata service is available. Valid values include enabled or disabled. Defaults to enabled. | `string` | `"enabled"` | no |
 | <a name="input_metadata_http_put_response_hop_limit"></a> [metadata\_http\_put\_response\_hop\_limit](#input\_metadata\_http\_put\_response\_hop\_limit) | The desired HTTP PUT response hop limit (between 1 and 64) for instance metadata requests. | `number` | `2` | no |
 | <a name="input_metadata_http_tokens_required"></a> [metadata\_http\_tokens\_required](#input\_metadata\_http\_tokens\_required) | Whether or not the metadata service requires session tokens, also referred to as Instance Metadata Service Version 2 (IMDSv2). Valid values include optional or required. Defaults to optional. | `string` | `"optional"` | no |
+| <a name="input_metadata_options"></a> [metadata\_options](#input\_metadata\_options) | Configuration for instance metadata options | <pre>object({<br>    http_endpoint               = string<br>    instance_metadata_tags      = string<br>    http_put_response_hop_limit = number<br>    http_tokens                 = string<br>  })</pre> | <pre>{<br>  "http_endpoint": null,<br>  "http_put_response_hop_limit": null,<br>  "http_tokens": null,<br>  "instance_metadata_tags": null<br>}</pre> | no |
 | <a name="input_monitoring"></a> [monitoring](#input\_monitoring) | If true, the launched EC2 instance will have detailed monitoring enabled. (Available since v0.6.0). | `bool` | `false` | no |
 | <a name="input_multi_attach_enabled"></a> [multi\_attach\_enabled](#input\_multi\_attach\_enabled) | Specifies whether to enable Amazon EBS Multi-Attach. Multi-Attach is supported on io1 and io2 volumes. | `bool` | `false` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name  (e.g. `app` or `cluster`). | `string` | `""` | no |
 | <a name="input_network_interface"></a> [network\_interface](#input\_network\_interface) | Customize network interfaces to be attached at instance boot time | `list(map(string))` | `[]` | no |
+| <a name="input_outpost_arn"></a> [outpost\_arn](#input\_outpost\_arn) | Optional ARN of the Outpost | `string` | `""` | no |
 | <a name="input_placement_group"></a> [placement\_group](#input\_placement\_group) | The Placement Group to start the instance in. | `string` | `""` | no |
+| <a name="input_placement_partition_number"></a> [placement\_partition\_number](#input\_placement\_partition\_number) | Partition number in the placement group | `number` | `null` | no |
+| <a name="input_prefix_list_ids"></a> [prefix\_list\_ids](#input\_prefix\_list\_ids) | (Optional) List of prefix list IDs. | `list(string)` | `[]` | no |
 | <a name="input_private_ip"></a> [private\_ip](#input\_private\_ip) | Private IP address to associate with the instance in a VPC | `string` | `null` | no |
 | <a name="input_protocol"></a> [protocol](#input\_protocol) | The protocol. If not icmp, tcp, udp, or all use the. | `string` | `"tcp"` | no |
 | <a name="input_public_key"></a> [public\_key](#input\_public\_key) | Name  (e.g. `ssh-rsa AAAAB3NzaC1ycAAADAQABAAABAQD3F6tyPEFEzV0LX3X8BsXdMsQ`). | `string` | `""` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Terraform current module repo | `string` | `"https://github.com/cypik/terraform-aws-ec2"` | no |
+| <a name="input_revoke_rules_on_delete"></a> [revoke\_rules\_on\_delete](#input\_revoke\_rules\_on\_delete) | (Optional) Revoke security group rules before deleting them to avoid cyclic dependencies. Default is false. | `bool` | `false` | no |
 | <a name="input_root_block_device"></a> [root\_block\_device](#input\_root\_block\_device) | Customize details about the root block device of the instance. See Block Devices below for details. | `list(any)` | `[]` | no |
 | <a name="input_rsa_bits"></a> [rsa\_bits](#input\_rsa\_bits) | When algorithm is RSA, the size of the generated RSA key, in bits (default: 2048). | `number` | `4096` | no |
 | <a name="input_secondary_private_ips"></a> [secondary\_private\_ips](#input\_secondary\_private\_ips) | A list of secondary private IPv4 addresses to assign to the instance's primary network interface (eth0) in a VPC. Can only be assigned to the primary network interface (eth0) attached at instance creation, not a pre-existing network interface i.e. referenced in a `network_interface block` | `list(string)` | `null` | no |
+| <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | List of security groups to assign | `list(string)` | `[]` | no |
+| <a name="input_self"></a> [self](#input\_self) | (Optional) Whether the security group itself should be added as a source. | `bool` | `false` | no |
+| <a name="input_set_identifier"></a> [set\_identifier](#input\_set\_identifier) | Unique identifier to differentiate records with routing policies. | `string` | `null` | no |
 | <a name="input_sg_description"></a> [sg\_description](#input\_sg\_description) | The security group description. | `string` | `"Instance default security group (only egress access is allowed)."` | no |
 | <a name="input_sg_egress_description"></a> [sg\_egress\_description](#input\_sg\_egress\_description) | Description of the egress and ingress rule | `string` | `"Description of the rule."` | no |
 | <a name="input_sg_egress_ipv6_description"></a> [sg\_egress\_ipv6\_description](#input\_sg\_egress\_ipv6\_description) | Description of the egress\_ipv6 rule | `string` | `"Description of the rule."` | no |
 | <a name="input_sg_ids"></a> [sg\_ids](#input\_sg\_ids) | of the security group id. | `list(any)` | `[]` | no |
 | <a name="input_sg_ingress_description"></a> [sg\_ingress\_description](#input\_sg\_ingress\_description) | Description of the ingress rule | `string` | `"Description of the ingress rule use elasticache."` | no |
+| <a name="input_skip_destroy"></a> [skip\_destroy](#input\_skip\_destroy) | Skip destroy and only remove the attachment from Terraform state (default is false) | `bool` | `false` | no |
+| <a name="input_snapshot_id"></a> [snapshot\_id](#input\_snapshot\_id) | Optional snapshot to base the EBS volume off of | `string` | `""` | no |
 | <a name="input_source_dest_check"></a> [source\_dest\_check](#input\_source\_dest\_check) | Controls if traffic is routed to the instance when the destination address does not match the instance. Used for NAT or VPNs. | `bool` | `true` | no |
+| <a name="input_source_security_group_id"></a> [source\_security\_group\_id](#input\_source\_security\_group\_id) | (Optional) Security group ID to allow traffic from/to. | `string` | `""` | no |
 | <a name="input_spot_block_duration_minutes"></a> [spot\_block\_duration\_minutes](#input\_spot\_block\_duration\_minutes) | The required duration for the Spot instances, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360) | `number` | `null` | no |
 | <a name="input_spot_instance_count"></a> [spot\_instance\_count](#input\_spot\_instance\_count) | Number of instances to launch. | `number` | `0` | no |
 | <a name="input_spot_instance_enabled"></a> [spot\_instance\_enabled](#input\_spot\_instance\_enabled) | Flag to control the instance creation. | `bool` | `true` | no |
@@ -284,6 +312,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_ssh_allowed_ports"></a> [ssh\_allowed\_ports](#input\_ssh\_allowed\_ports) | List of allowed ingress ports | `list(any)` | `[]` | no |
 | <a name="input_ssh_protocol"></a> [ssh\_protocol](#input\_ssh\_protocol) | The protocol. If not icmp, tcp, udp, or all use the. | `string` | `"tcp"` | no |
 | <a name="input_ssh_sg_ingress_description"></a> [ssh\_sg\_ingress\_description](#input\_ssh\_sg\_ingress\_description) | Description of the ingress rule | `string` | `"Description of the ingress rule use elasticache."` | no |
+| <a name="input_stop_instance_before_detaching"></a> [stop\_instance\_before\_detaching](#input\_stop\_instance\_before\_detaching) | Stop instance before detaching the volume (default is false) | `bool` | `false` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | A list of VPC Subnet IDs to launch in. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags (e.g. map(`BusinessUnit`,`XYZ`). | `map(any)` | `{}` | no |
 | <a name="input_tenancy"></a> [tenancy](#input\_tenancy) | The tenancy of the instance (if the instance is running in a VPC). An instance with a tenancy of dedicated runs on single-tenant hardware. The host tenancy is not supported for the import-instance command. | `string` | `"default"` | no |
@@ -294,6 +323,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_user_data_base64"></a> [user\_data\_base64](#input\_user\_data\_base64) | Can be used instead of user\_data to pass base64-encoded binary data directly. Use this instead of user\_data whenever the value is not a valid UTF-8 string. For example, gzip-encoded user data must be base64-encoded and passed via this argument to avoid corruption | `string` | `null` | no |
 | <a name="input_user_data_replace_on_change"></a> [user\_data\_replace\_on\_change](#input\_user\_data\_replace\_on\_change) | When used in combination with user\_data or user\_data\_base64 will trigger a destroy and recreate when set to true. Defaults to false if not set | `bool` | `null` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The ID of the VPC that the instance security group belongs to. | `string` | `""` | no |
+| <a name="input_weighted_routing_policy"></a> [weighted\_routing\_policy](#input\_weighted\_routing\_policy) | Weighted routing policy details. | `map(any)` | `{}` | no |
 
 ## Outputs
 
@@ -301,6 +331,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the instance. |
 | <a name="output_az"></a> [az](#output\_az) | The availability zone of the instance. |
+| <a name="output_ebs_volume_ids"></a> [ebs\_volume\_ids](#output\_ebs\_volume\_ids) | The list of EBS volume IDs |
 | <a name="output_instance_id"></a> [instance\_id](#output\_instance\_id) | The instance ID. |
 | <a name="output_ipv6_addresses"></a> [ipv6\_addresses](#output\_ipv6\_addresses) | A list of assigned IPv6 addresses. |
 | <a name="output_key_name"></a> [key\_name](#output\_key\_name) | The key name of the instance. |
@@ -308,9 +339,13 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="output_placement_group"></a> [placement\_group](#output\_placement\_group) | The placement group of the instance. |
 | <a name="output_private_ip"></a> [private\_ip](#output\_private\_ip) | Private IP of instance. |
 | <a name="output_public_ip"></a> [public\_ip](#output\_public\_ip) | Public IP of instance (or EIP). |
+| <a name="output_route53_record_health_check"></a> [route53\_record\_health\_check](#output\_route53\_record\_health\_check) | The health check ID for the Route 53 DNS record. |
+| <a name="output_route53_record_name"></a> [route53\_record\_name](#output\_route53\_record\_name) | The name of the Route 53 DNS record. |
+| <a name="output_route53_record_set_identifier"></a> [route53\_record\_set\_identifier](#output\_route53\_record\_set\_identifier) | The unique identifier for the DNS record. |
 | <a name="output_spot_bid_status"></a> [spot\_bid\_status](#output\_spot\_bid\_status) | The current bid status of the Spot Instance Request |
 | <a name="output_spot_instance_id"></a> [spot\_instance\_id](#output\_spot\_instance\_id) | The instance ID. |
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | The EC2 subnet ID. |
 | <a name="output_tags"></a> [tags](#output\_tags) | The instance ID. |
+| <a name="output_volume_attachment_ids"></a> [volume\_attachment\_ids](#output\_volume\_attachment\_ids) | The list of volume attachment IDs |
 | <a name="output_vpc_security_group_ids"></a> [vpc\_security\_group\_ids](#output\_vpc\_security\_group\_ids) | The associated security groups in non-default VPC. |
 <!-- END_TF_DOCS -->

@@ -3,7 +3,7 @@
 ##==================================================================================
 module "labels" {
   source      = "cypik/labels/aws"
-  version     = "1.0.1"
+  version     = "1.0.2"
   name        = var.name
   repository  = var.repository
   environment = var.environment
@@ -39,11 +39,12 @@ resource "aws_key_pair" "default" {
 }
 
 resource "aws_security_group" "default" {
-  count       = var.enable && var.enable_security_group && length(var.sg_ids) < 1 ? 1 : 0
-  name        = format("%s-ec2-sg", module.labels.id)
-  vpc_id      = var.vpc_id
-  description = var.sg_description
-  tags        = module.labels.tags
+  count                  = var.enable && var.enable_security_group && length(var.sg_ids) < 1 ? 1 : 0
+  name                   = format("%s-ec2-sg", module.labels.id)
+  vpc_id                 = var.vpc_id
+  description            = var.sg_description
+  revoke_rules_on_delete = var.revoke_rules_on_delete
+  tags                   = module.labels.tags
   lifecycle {
     create_before_destroy = true
   }
@@ -140,8 +141,10 @@ resource "aws_instance" "default" {
   subnet_id                            = element(distinct(compact(concat(var.subnet_ids))), count.index)
   associate_public_ip_address          = var.associate_public_ip_address
   disable_api_termination              = var.disable_api_termination
+  disable_api_stop                     = var.disable_api_stop
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
   placement_group                      = var.placement_group
+  placement_partition_number           = var.placement_partition_number
   tenancy                              = var.tenancy
   host_id                              = var.host_id
   cpu_core_count                       = var.cpu_core_count
@@ -258,6 +261,10 @@ resource "aws_instance" "default" {
     }
   }
 
+  maintenance_options {
+    auto_recovery = lookup(var.maintenance_options, "auto_recovery", null)
+  }
+
   timeouts {
     create = lookup(var.timeouts, "create", null)
     delete = lookup(var.timeouts, "delete", null)
@@ -305,20 +312,26 @@ resource "aws_ebs_volume" "default" {
   multi_attach_enabled = var.multi_attach_enabled
   encrypted            = true
   kms_key_id           = var.kms_key_id == "" ? join("", aws_kms_key.default[*].arn) : var.kms_key_id
+  snapshot_id          = var.snapshot_id
+  outpost_arn          = var.outpost_arn
+  #  throughput           = var.throughput
   tags = merge(module.labels.tags,
     { "Name" = format("%s-ebs-volume%s%s", module.labels.id, var.delimiter, (count.index))
     },
     var.tags
   )
-  depends_on = [aws_instance.default]
+  final_snapshot = var.final_snapshot
+  depends_on     = [aws_instance.default]
 }
-
 resource "aws_volume_attachment" "default" {
-  count       = var.enable && var.ebs_volume_enabled ? var.instance_count : 0
-  device_name = element(var.ebs_device_name, count.index)
-  volume_id   = element(aws_ebs_volume.default[*].id, count.index)
-  instance_id = element(aws_instance.default[*].id, count.index)
-  depends_on  = [aws_instance.default]
+  count                          = var.enable && var.ebs_volume_enabled ? var.instance_count : 0
+  device_name                    = element(var.ebs_device_name, count.index)
+  volume_id                      = element(aws_ebs_volume.default[*].id, count.index)
+  instance_id                    = element(aws_instance.default[*].id, count.index)
+  force_detach                   = var.force_detach
+  skip_destroy                   = var.skip_destroy
+  stop_instance_before_detaching = var.stop_instance_before_detaching
+  depends_on                     = [aws_instance.default]
 }
 
 resource "aws_iam_instance_profile" "default" {
@@ -334,6 +347,59 @@ resource "aws_route53_record" "default" {
   type    = var.type
   ttl     = var.ttl
   records = [element(aws_instance.default[*].private_dns, count.index)]
+
+  # Optional arguments
+  set_identifier  = var.set_identifier
+  health_check_id = var.health_check_id
+  allow_overwrite = var.allow_overwrite
+
+  dynamic "cidr_routing_policy" {
+    for_each = var.cidr_routing_policy
+    content {
+      collection_id = cidr_routing_policy.value.collection_id
+      location_name = cidr_routing_policy.value.location_name
+    }
+  }
+
+  dynamic "failover_routing_policy" {
+    for_each = var.failover_routing_policy
+    content {
+      type = failover_routing_policy.value.type
+    }
+  }
+
+  dynamic "geolocation_routing_policy" {
+    for_each = var.geolocation_routing_policy
+    content {
+      continent   = lookup(geolocation_routing_policy.value, "continent", null)
+      country     = lookup(geolocation_routing_policy.value, "country", null)
+      subdivision = lookup(geolocation_routing_policy.value, "subdivision", null)
+    }
+  }
+
+  dynamic "geoproximity_routing_policy" {
+    for_each = var.geoproximity_routing_policy
+    content {
+      aws_region = geoproximity_routing_policy.value.aws_region
+      bias       = lookup(geoproximity_routing_policy.value, "bias", null)
+      #      coordinates       = lookup(geoproximity_routing_policy.value, "coordinates", null)
+      local_zone_group = lookup(geoproximity_routing_policy.value, "local_zone_group", null)
+    }
+  }
+
+  dynamic "latency_routing_policy" {
+    for_each = var.latency_routing_policy
+    content {
+      region = latency_routing_policy.value.region
+    }
+  }
+
+  dynamic "weighted_routing_policy" {
+    for_each = var.weighted_routing_policy
+    content {
+      weight = weighted_routing_policy.value.weight
+    }
+  }
 }
 
 resource "aws_spot_instance_request" "default" {
@@ -358,6 +424,8 @@ resource "aws_spot_instance_request" "default" {
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
   placement_group                      = var.placement_group
   tenancy                              = var.tenancy
+  disable_api_stop                     = var.disable_api_stop
+  placement_partition_number           = var.placement_partition_number
   host_id                              = var.host_id
   cpu_core_count                       = var.cpu_core_count
   cpu_threads_per_core                 = var.cpu_threads_per_core
@@ -483,6 +551,9 @@ resource "aws_spot_instance_request" "default" {
     delete = try(var.timeouts.delete, null)
   }
 
+  maintenance_options {
+    auto_recovery = lookup(var.maintenance_options, "auto_recovery", null)
+  }
   tags = merge(
     module.labels.tags,
     {

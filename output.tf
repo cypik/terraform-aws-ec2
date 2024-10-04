@@ -63,11 +63,36 @@ output "spot_instance_id" {
 }
 
 output "spot_bid_status" {
-  description = "The current bid status of the Spot Instance Request"
   value       = join("", aws_spot_instance_request.default[*].spot_bid_status)
+  description = "The current bid status of the Spot Instance Request"
 }
 
 output "tags" {
   value       = module.labels.tags
   description = "The instance ID."
+}
+
+output "ebs_volume_ids" {
+  value       = aws_ebs_volume.default[*].id
+  description = "The list of EBS volume IDs"
+}
+
+output "volume_attachment_ids" {
+  value       = aws_volume_attachment.default[*].id
+  description = "The list of volume attachment IDs"
+}
+
+output "route53_record_name" {
+  value       = aws_route53_record.default[*].name
+  description = "The name of the Route 53 DNS record."
+}
+
+output "route53_record_set_identifier" {
+  value       = aws_route53_record.default[*].set_identifier
+  description = "The unique identifier for the DNS record."
+}
+
+output "route53_record_health_check" {
+  value       = aws_route53_record.default[*].health_check_id
+  description = "The health check ID for the Route 53 DNS record."
 }
