@@ -9,7 +9,7 @@ locals {
 
 module "vpc" {
   source      = "cypik/vpc/aws"
-  version     = "1.0.1"
+  version     = "1.0.2"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
@@ -19,12 +19,12 @@ module "vpc" {
 
 module "public_subnets" {
   source             = "cypik/subnet/aws"
-  version            = "1.0.1"
+  version            = "1.0.3"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
   availability_zones = ["eu-west-1b", "eu-west-1c"]
-  vpc_id             = module.vpc.id
+  vpc_id             = module.vpc.vpc_id
   cidr_block         = module.vpc.vpc_cidr_block
   type               = "public"
   igw_id             = module.vpc.igw_id
@@ -37,7 +37,7 @@ module "spot-ec2" {
   name        = "ec2"
   environment = "test"
 
-  vpc_id            = module.vpc.id
+  vpc_id            = module.vpc.vpc_id
   ssh_allowed_ip    = ["0.0.0.0/0"]
   ssh_allowed_ports = [22]
 
@@ -48,7 +48,7 @@ module "spot-ec2" {
   }
 
   #Keypair
-  public_key = "ssh-ejlxxxxxxxxxxxxxx4NxwybES6FdkYLXFZYWiv7uuujVlfxvN2mrkV3363ftc= baldev@baldev"
+  public_key = "ssh-rsa AAAAjjiK9yDJmxwiw7ZNRrs525oqk5uJfXkHmOcIvfeRhnLBg84Eqvqdu5hhDRRDRjH+gVk="
 
   # Spot-instance
   spot_price                          = "0.3"

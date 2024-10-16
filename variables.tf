@@ -16,6 +16,12 @@ variable "repository" {
   }
 }
 
+variable "revoke_rules_on_delete" {
+  type        = bool
+  default     = false
+  description = "(Optional) Revoke security group rules before deleting them to avoid cyclic dependencies. Default is false."
+}
+
 variable "environment" {
   type        = string
   default     = ""
@@ -282,6 +288,117 @@ variable "ttl" {
   description = "The TTL of the record to add to the DNS zone to complete certificate validation."
 }
 
+variable "final_snapshot" {
+  type        = bool
+  default     = false
+  description = "If true, a snapshot will be created before volume deletion (default is false)"
+}
+
+variable "snapshot_id" {
+  type        = string
+  default     = ""
+  description = "Optional snapshot to base the EBS volume off of"
+}
+
+variable "outpost_arn" {
+  type        = string
+  default     = ""
+  description = "Optional ARN of the Outpost"
+}
+
+variable "force_detach" {
+  type        = bool
+  default     = false
+  description = "Force detach the volume (default is false)"
+}
+
+variable "skip_destroy" {
+  type        = bool
+  default     = false
+  description = "Skip destroy and only remove the attachment from Terraform state (default is false)"
+}
+
+variable "set_identifier" {
+  type        = string
+  default     = null
+  description = "Unique identifier to differentiate records with routing policies."
+}
+
+variable "health_check_id" {
+  type        = string
+  default     = null
+  description = "The health check ID for the DNS record."
+}
+
+variable "allow_overwrite" {
+  type        = bool
+  default     = false
+  description = "Allow creation of this record in Terraform to overwrite an existing record."
+}
+
+variable "cidr_routing_policy" {
+  type        = map(any)
+  default     = {}
+  description = "CIDR routing policy details."
+}
+
+variable "failover_routing_policy" {
+  type        = map(any)
+  default     = {}
+  description = "Failover routing policy details."
+}
+
+variable "geolocation_routing_policy" {
+  type        = map(any)
+  default     = {}
+  description = "Geolocation routing policy details."
+}
+
+variable "geoproximity_routing_policy" {
+  type        = map(any)
+  default     = {}
+  description = "Geoproximity routing policy details."
+}
+
+variable "latency_routing_policy" {
+  type        = map(any)
+  default     = {}
+  description = "Latency routing policy details."
+}
+
+variable "weighted_routing_policy" {
+  type        = map(any)
+  default     = {}
+  description = "Weighted routing policy details."
+}
+
+variable "disable_api_stop" {
+  type        = bool
+  default     = false
+  description = "Whether to enable stopping the instance via the API"
+}
+
+variable "placement_partition_number" {
+  type        = number
+  default     = null
+  description = "Partition number in the placement group"
+}
+
+variable "maintenance_options" {
+  type = object({
+    auto_recovery = string
+  })
+  default = {
+    auto_recovery = null
+  }
+  description = "Options for instance maintenance"
+}
+
+variable "stop_instance_before_detaching" {
+  type        = bool
+  default     = false
+  description = "Stop instance before detaching the volume (default is false)"
+}
 variable "metadata_http_tokens_required" {
   type        = string
   default     = "optional"
