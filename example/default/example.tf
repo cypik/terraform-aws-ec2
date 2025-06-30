@@ -9,7 +9,7 @@ locals {
 
 module "vpc" {
   source      = "cypik/vpc/aws"
-  version     = "1.0.2"
+  version     = "1.0.3"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
@@ -18,7 +18,7 @@ module "vpc" {
 
 module "public_subnets" {
   source             = "cypik/subnet/aws"
-  version            = "1.0.3"
+  version            = "1.0.5"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
@@ -32,7 +32,7 @@ module "public_subnets" {
 
 module "iam-role" {
   source             = "cypik/iam-role/aws"
-  version            = "1.0.1"
+  version            = "1.0.3"
   name               = "iam-role"
   environment        = local.environment
   label_order        = local.label_order
@@ -85,7 +85,7 @@ module "ec2" {
   instance_type  = "t2.micro"
 
   #Keypair
-  public_key = "ssh-rsa ABuCc9UCUiQlNvHqjhz+Iy4fn3lsvengN7ennvhhDRRDRjH+gVk= "
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDXtnrTCvN0ThcuIARFyEyQUSP9W7JUKs92R7ccjf9D4ccOYV6DMAtezwp48DplX+4Thap3v8tiFvwbtkT1Bld7WHLxD9lKsEkuuJBuCc9vpseClV9O+bN1Gx0SKiV+1AkmvsTckhyO55ldnkeGh7L+LNsaAsC5BbmhwLqlLnSHj8RdRu8z0GNIRmqRit0tNXXfux0VP0hdXAh+IblsQzqbEWr7viG2oWcntQlSZgVf+kS8SisbnsrM0b56rOVG5MZBH98cVjuazt0NHxDodrCYdZVc6dS4pHc+WxunaILSXyAJJHOEaSwU2rwCD03HPjLZD6WcU5Jlo+vz5ofIc3Vz06MgYRkFJHB1cRgqpdF5ckTPSa7KjjiK9yDJmxwiw7ZNRrs525oqk5uJfXkHmOcIvfeRhnLBg84Eqvqdu5jjsIJRSiOCZdUpB82KZ5DaPhQH0Ev6ua9JoMQCkUCUiQlNvHqjhz+Iy4fn3lsvengN7ennSRjPdvhhDRRDRjH+gVk= satish@satish"
 
   #Networking
   subnet_ids = tolist(module.public_subnets.public_subnet_id)

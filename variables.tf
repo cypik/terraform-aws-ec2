@@ -123,16 +123,10 @@ variable "root_block_device" {
   description = "Customize details about the root block device of the instance. See Block Devices below for details."
 }
 
-variable "user_data" {
-  type        = string
-  default     = ""
-  description = "(Optional) A string of the desired User Data for the ec2."
-}
-
 variable "user_data_base64" {
-  description = "Can be used instead of user_data to pass base64-encoded binary data directly. Use this instead of user_data whenever the value is not a valid UTF-8 string. For example, gzip-encoded user data must be base64-encoded and passed via this argument to avoid corruption"
   type        = string
   default     = null
+  description = "(Optional) Base64 encoded user data for the EC2 instance. If provided, this overrides user_data."
 }
 
 variable "assign_eip_address" {
@@ -225,12 +219,6 @@ variable "host_id" {
   type        = string
   default     = null
   description = "The Id of a dedicated host that the instance will be assigned to. Use when an instance is to be launched on a specific dedicated host."
-}
-
-variable "cpu_core_count" {
-  type        = string
-  default     = null
-  description = "Sets the number of CPU cores for an instance."
 }
 
 variable "iam_instance_profile" {
@@ -642,12 +630,6 @@ variable "spot_launch_group" {
   description = "A launch group is a group of spot instances that launch together and terminate together. If left empty instances are launched and terminated individually"
 }
 
-variable "spot_block_duration_minutes" {
-  type        = number
-  default     = null
-  description = "The required duration for the Spot instances, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360)"
-}
-
 variable "spot_instance_interruption_behavior" {
   type        = string
   default     = null
@@ -664,12 +646,6 @@ variable "spot_valid_from" {
   type        = string
   default     = null
   description = "The start date and time of the request, in UTC RFC3339 format(for example, YYYY-MM-DDTHH:MM:SSZ)"
-}
-
-variable "cpu_threads_per_core" {
-  description = "Sets the number of CPU threads per core for an instance (has no effect unless cpu_core_count is also set)"
-  type        = number
-  default     = null
 }
 
 variable "user_data_replace_on_change" {

@@ -24,7 +24,7 @@ To use this module, you should have Terraform installed and configured for AWS. 
 # Create EC2 instances
 module "ec2" {
   source            = "cypik/ec2/aws"
-  version           = "1.0.4"
+  version           = "1.0.5"
   name              = "ec2"
   environment       = local.environment
   vpc_id            = module.vpc.vpc_id
@@ -78,7 +78,7 @@ This example demonstrates how to create various AWS resources using the provided
 ```hcl
 module "spot-ec2" {
   source            = "cypik/ec2/aws"
-  version           = "1.0.3"
+  version           = "1.0.5"
   name              = "ec2"
   environment       = "test"
   vpc_id            = module.vpc.vpc_id
@@ -141,16 +141,16 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=5.67.0 |
-| <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 2.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.12.1 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=5.82.2 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | >=4.1.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >=5.67.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | >= 2.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >=5.82.2 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | >=4.1.0 |
 
 ## Modules
 
@@ -312,7 +312,7 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_ttl"></a> [ttl](#input\_ttl) | The TTL of the record to add to the DNS zone to complete certificate validation. | `string` | `"300"` | no |
 | <a name="input_type"></a> [type](#input\_type) | Type of DNS records to create. | `string` | `"CNAME"` | no |
 | <a name="input_user_data"></a> [user\_data](#input\_user\_data) | (Optional) A string of the desired User Data for the ec2. | `string` | `""` | no |
-| <a name="input_user_data_base64"></a> [user\_data\_base64](#input\_user\_data\_base64) | Can be used instead of user\_data to pass base64-encoded binary data directly. Use this instead of user\_data whenever the value is not a valid UTF-8 string. For example, gzip-encoded user data must be base64-encoded and passed via this argument to avoid corruption | `string` | `null` | no |
+| <a name="input_user_data_base64"></a> [user\_data\_base64](#input\_user\_data\_base64) | (Optional) Base64 encoded user data for the EC2 instance. If provided, this overrides user\_data. | `string` | `null` | no |
 | <a name="input_user_data_replace_on_change"></a> [user\_data\_replace\_on\_change](#input\_user\_data\_replace\_on\_change) | When used in combination with user\_data or user\_data\_base64 will trigger a destroy and recreate when set to true. Defaults to false if not set | `bool` | `null` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The ID of the VPC that the instance security group belongs to. | `string` | `""` | no |
 | <a name="input_weighted_routing_policy"></a> [weighted\_routing\_policy](#input\_weighted\_routing\_policy) | Weighted routing policy details. | `map(any)` | `{}` | no |
