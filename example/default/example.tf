@@ -9,7 +9,7 @@ locals {
 
 module "vpc" {
   source      = "cypik/vpc/aws"
-  version     = "1.0.2"
+  version     = "1.0.3"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
@@ -18,7 +18,7 @@ module "vpc" {
 
 module "public_subnets" {
   source             = "cypik/subnet/aws"
-  version            = "1.0.3"
+  version            = "1.0.5"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
@@ -32,7 +32,7 @@ module "public_subnets" {
 
 module "iam-role" {
   source             = "cypik/iam-role/aws"
-  version            = "1.0.1"
+  version            = "1.0.3"
   name               = "iam-role"
   environment        = local.environment
   label_order        = local.label_order
@@ -85,7 +85,7 @@ module "ec2" {
   instance_type  = "t2.micro"
 
   #Keypair
-  public_key = "ssh-rsa ABuCc9UCUiQlNvHqjhz+Iy4fn3lsvengN7ennvhhDRRDRjH+gVk= "
+  public_key = "ssh-rsxxxxxxxxxxxxxxxxxxxxxvengN7ennSRjPdvhhDRRDRjH+"
 
   #Networking
   subnet_ids = tolist(module.public_subnets.public_subnet_id)

@@ -61,6 +61,7 @@ resource "aws_security_group_rule" "egress_ipv4" {
   cidr_blocks       = var.egress_ipv4_cidr_block
   security_group_id = join("", aws_security_group.default[*].id)
 }
+
 #tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group_rule" "egress_ipv6" {
   count             = var.enable && var.enable_security_group && length(var.sg_ids) < 1 && var.is_external == false && var.egress_rule ? 1 : 0
@@ -72,6 +73,7 @@ resource "aws_security_group_rule" "egress_ipv6" {
   ipv6_cidr_blocks  = var.egress_ipv6_cidr_block
   security_group_id = join("", aws_security_group.default[*].id)
 }
+
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group_rule" "ssh_ingress" {
   count             = var.enable && length(var.ssh_allowed_ip) > 0 && length(var.sg_ids) < 1 ? length(compact(var.ssh_allowed_ports)) : 0
@@ -83,6 +85,7 @@ resource "aws_security_group_rule" "ssh_ingress" {
   cidr_blocks       = var.ssh_allowed_ip
   security_group_id = join("", aws_security_group.default[*].id)
 }
+
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group_rule" "ingress" {
   for_each = var.allow_ingress_port_ip
@@ -147,20 +150,20 @@ resource "aws_instance" "default" {
   placement_partition_number           = var.placement_partition_number
   tenancy                              = var.tenancy
   host_id                              = var.host_id
-  cpu_core_count                       = var.cpu_core_count
-  cpu_threads_per_core                 = var.cpu_threads_per_core
-  user_data                            = var.user_data
-  user_data_base64                     = var.user_data_base64
-  user_data_replace_on_change          = var.user_data_replace_on_change
-  availability_zone                    = var.availability_zone
-  get_password_data                    = var.get_password_data
-  private_ip                           = var.private_ip
-  secondary_private_ips                = var.secondary_private_ips
-  iam_instance_profile                 = join("", aws_iam_instance_profile.default[*].name)
-  source_dest_check                    = var.source_dest_check
-  ipv6_address_count                   = var.ipv6_address_count
-  ipv6_addresses                       = var.ipv6_addresses
-  hibernation                          = var.hibernation
+  #  cpu_core_count                       = var.cpu_core_count
+  #  cpu_threads_per_core                 = var.cpu_threads_per_core
+  #  user_data                            = var.user_data
+  user_data_base64            = var.user_data_base64
+  user_data_replace_on_change = var.user_data_replace_on_change
+  availability_zone           = var.availability_zone
+  get_password_data           = var.get_password_data
+  private_ip                  = var.private_ip
+  secondary_private_ips       = var.secondary_private_ips
+  iam_instance_profile        = join("", aws_iam_instance_profile.default[*].name)
+  source_dest_check           = var.source_dest_check
+  ipv6_address_count          = var.ipv6_address_count
+  ipv6_addresses              = var.ipv6_addresses
+  hibernation                 = var.hibernation
   dynamic "cpu_options" {
     for_each = length(var.cpu_options) > 0 ? [var.cpu_options] : []
     content {
@@ -323,6 +326,7 @@ resource "aws_ebs_volume" "default" {
   final_snapshot = var.final_snapshot
   depends_on     = [aws_instance.default]
 }
+
 resource "aws_volume_attachment" "default" {
   count                          = var.enable && var.ebs_volume_enabled ? var.instance_count : 0
   device_name                    = element(var.ebs_device_name, count.index)
@@ -403,12 +407,12 @@ resource "aws_route53_record" "default" {
 }
 
 resource "aws_spot_instance_request" "default" {
-  count                                = var.enable && var.spot_instance_enabled ? var.spot_instance_count : 0
-  spot_price                           = var.spot_price
-  wait_for_fulfillment                 = var.spot_wait_for_fulfillment
-  spot_type                            = var.spot_type
-  launch_group                         = var.spot_launch_group
-  block_duration_minutes               = var.spot_block_duration_minutes
+  count                = var.enable && var.spot_instance_enabled ? var.spot_instance_count : 0
+  spot_price           = var.spot_price
+  wait_for_fulfillment = var.spot_wait_for_fulfillment
+  spot_type            = var.spot_type
+  launch_group         = var.spot_launch_group
+  #  block_duration_minutes               = var.spot_block_duration_minutes
   instance_interruption_behavior       = var.spot_instance_interruption_behavior
   valid_until                          = var.spot_valid_until
   valid_from                           = var.spot_valid_from
@@ -427,20 +431,20 @@ resource "aws_spot_instance_request" "default" {
   disable_api_stop                     = var.disable_api_stop
   placement_partition_number           = var.placement_partition_number
   host_id                              = var.host_id
-  cpu_core_count                       = var.cpu_core_count
-  cpu_threads_per_core                 = var.cpu_threads_per_core
-  user_data                            = var.user_data
-  user_data_base64                     = var.user_data_base64
-  user_data_replace_on_change          = var.user_data_replace_on_change
-  availability_zone                    = var.availability_zone
-  get_password_data                    = var.get_password_data
-  private_ip                           = var.private_ip
-  secondary_private_ips                = var.secondary_private_ips
-  iam_instance_profile                 = join("", aws_iam_instance_profile.default[*].name)
-  source_dest_check                    = var.source_dest_check
-  ipv6_address_count                   = var.ipv6_address_count
-  ipv6_addresses                       = var.ipv6_addresses
-  hibernation                          = var.hibernation
+  #  cpu_core_count                       = var.cpu_core_count
+  #  cpu_threads_per_core                 = var.cpu_threads_per_core
+  #  user_data                            = var.user_data
+  user_data_base64            = var.user_data_base64
+  user_data_replace_on_change = var.user_data_replace_on_change
+  availability_zone           = var.availability_zone
+  get_password_data           = var.get_password_data
+  private_ip                  = var.private_ip
+  secondary_private_ips       = var.secondary_private_ips
+  iam_instance_profile        = join("", aws_iam_instance_profile.default[*].name)
+  source_dest_check           = var.source_dest_check
+  ipv6_address_count          = var.ipv6_address_count
+  ipv6_addresses              = var.ipv6_addresses
+  hibernation                 = var.hibernation
 
   dynamic "cpu_options" {
     for_each = length(var.cpu_options) > 0 ? [var.cpu_options] : []

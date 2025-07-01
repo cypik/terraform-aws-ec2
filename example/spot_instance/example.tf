@@ -9,7 +9,7 @@ locals {
 
 module "vpc" {
   source      = "cypik/vpc/aws"
-  version     = "1.0.2"
+  version     = "1.0.3"
   name        = "app"
   environment = local.environment
   label_order = local.label_order
@@ -19,7 +19,7 @@ module "vpc" {
 
 module "public_subnets" {
   source             = "cypik/subnet/aws"
-  version            = "1.0.3"
+  version            = "1.0.5"
   name               = "public-subnet"
   environment        = local.environment
   label_order        = local.label_order
@@ -48,7 +48,7 @@ module "spot-ec2" {
   }
 
   #Keypair
-  public_key = "ssh-rsa AAAAjjiK9yDJmxwiw7ZNRrs525oqk5uJfXkHmOcIvfeRhnLBg84Eqvqdu5hhDRRDRjH+gVk="
+  public_key = "ssh-rsa AAAAxxxxxxxxxxxxxxxxxxxxxxxxxxxCUiQlNvHqjhz+Iy4fn3lsvengN7ennSRjPdvhhDRRDRjH+g"
 
   # Spot-instance
   spot_price                          = "0.3"
