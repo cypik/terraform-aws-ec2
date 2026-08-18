@@ -24,7 +24,7 @@ To use this module, you should have Terraform installed and configured for AWS. 
 # Create EC2 instances
 module "ec2" {
   source            = "cypik/ec2/aws"
-  version           = "1.0.5"
+  version           = "1.0.6"
   name              = "ec2"
   environment       = local.environment
   vpc_id            = module.vpc.vpc_id
@@ -78,7 +78,7 @@ This example demonstrates how to create various AWS resources using the provided
 ```hcl
 module "spot-ec2" {
   source            = "cypik/ec2/aws"
-  version           = "1.0.5"
+  version           = "1.0.6"
   name              = "ec2"
   environment       = "test"
   vpc_id            = module.vpc.vpc_id
@@ -141,22 +141,22 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.12.1 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >=5.82.2 |
-| <a name="requirement_tls"></a> [tls](#requirement\_tls) | >=4.1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.15.8 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.58.0 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 4.3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >=5.82.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | >=4.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.58.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | >= 4.3.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_labels"></a> [labels](#module\_labels) | cypik/labels/aws | 1.0.2 |
+| <a name="module_labels"></a> [labels](#module\_labels) | cypik/labels/aws | 1.0.4 |
 
 ## Resources
 
@@ -195,10 +195,8 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_availability_zone"></a> [availability\_zone](#input\_availability\_zone) | AZ to start the instance in | `string` | `null` | no |
 | <a name="input_capacity_reservation_specification"></a> [capacity\_reservation\_specification](#input\_capacity\_reservation\_specification) | Describes an instance's Capacity Reservation targeting option | `any` | `{}` | no |
 | <a name="input_cidr_routing_policy"></a> [cidr\_routing\_policy](#input\_cidr\_routing\_policy) | CIDR routing policy details. | `map(any)` | `{}` | no |
-| <a name="input_cpu_core_count"></a> [cpu\_core\_count](#input\_cpu\_core\_count) | Sets the number of CPU cores for an instance. | `string` | `null` | no |
 | <a name="input_cpu_credits"></a> [cpu\_credits](#input\_cpu\_credits) | The credit option for CPU usage. Can be `standard` or `unlimited`. T3 instances are launched as unlimited by default. T2 instances are launched as standard by default. | `string` | `"standard"` | no |
 | <a name="input_cpu_options"></a> [cpu\_options](#input\_cpu\_options) | Defines CPU options to apply to the instance at launch time. | `any` | `{}` | no |
-| <a name="input_cpu_threads_per_core"></a> [cpu\_threads\_per\_core](#input\_cpu\_threads\_per\_core) | Sets the number of CPU threads per core for an instance (has no effect unless cpu\_core\_count is also set) | `number` | `null` | no |
 | <a name="input_customer_master_key_spec"></a> [customer\_master\_key\_spec](#input\_customer\_master\_key\_spec) | Specifies whether the key contains a symmetric key or an asymmetric key pair and the encryption algorithms or signing algorithms that the key supports. Valid values: SYMMETRIC\_DEFAULT, RSA\_2048, RSA\_3072, RSA\_4096, ECC\_NIST\_P256, ECC\_NIST\_P384, ECC\_NIST\_P521, or ECC\_SECG\_P256K1. Defaults to SYMMETRIC\_DEFAULT. | `string` | `"SYMMETRIC_DEFAULT"` | no |
 | <a name="input_default_instance_enabled"></a> [default\_instance\_enabled](#input\_default\_instance\_enabled) | Flag to control the instance creation. | `bool` | `true` | no |
 | <a name="input_deletion_window_in_days"></a> [deletion\_window\_in\_days](#input\_deletion\_window\_in\_days) | Duration in days after which the key is deleted after destruction of the resource. | `number` | `7` | no |
@@ -289,7 +287,6 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_skip_destroy"></a> [skip\_destroy](#input\_skip\_destroy) | Skip destroy and only remove the attachment from Terraform state (default is false) | `bool` | `false` | no |
 | <a name="input_snapshot_id"></a> [snapshot\_id](#input\_snapshot\_id) | Optional snapshot to base the EBS volume off of | `string` | `""` | no |
 | <a name="input_source_dest_check"></a> [source\_dest\_check](#input\_source\_dest\_check) | Controls if traffic is routed to the instance when the destination address does not match the instance. Used for NAT or VPNs. | `bool` | `true` | no |
-| <a name="input_spot_block_duration_minutes"></a> [spot\_block\_duration\_minutes](#input\_spot\_block\_duration\_minutes) | The required duration for the Spot instances, in minutes. This value must be a multiple of 60 (60, 120, 180, 240, 300, or 360) | `number` | `null` | no |
 | <a name="input_spot_instance_count"></a> [spot\_instance\_count](#input\_spot\_instance\_count) | Number of instances to launch. | `number` | `0` | no |
 | <a name="input_spot_instance_enabled"></a> [spot\_instance\_enabled](#input\_spot\_instance\_enabled) | Flag to control the instance creation. | `bool` | `true` | no |
 | <a name="input_spot_instance_interruption_behavior"></a> [spot\_instance\_interruption\_behavior](#input\_spot\_instance\_interruption\_behavior) | Indicates Spot instance behavior when it is interrupted. Valid values are `terminate`, `stop`, or `hibernate` | `string` | `null` | no |
@@ -311,7 +308,6 @@ Replace **MIT** and **Cypik** with the appropriate license and your information.
 | <a name="input_timeouts"></a> [timeouts](#input\_timeouts) | Define maximum timeout for creating, updating, and deleting EC2 instance resources | `map(string)` | `{}` | no |
 | <a name="input_ttl"></a> [ttl](#input\_ttl) | The TTL of the record to add to the DNS zone to complete certificate validation. | `string` | `"300"` | no |
 | <a name="input_type"></a> [type](#input\_type) | Type of DNS records to create. | `string` | `"CNAME"` | no |
-| <a name="input_user_data"></a> [user\_data](#input\_user\_data) | (Optional) A string of the desired User Data for the ec2. | `string` | `""` | no |
 | <a name="input_user_data_base64"></a> [user\_data\_base64](#input\_user\_data\_base64) | (Optional) Base64 encoded user data for the EC2 instance. If provided, this overrides user\_data. | `string` | `null` | no |
 | <a name="input_user_data_replace_on_change"></a> [user\_data\_replace\_on\_change](#input\_user\_data\_replace\_on\_change) | When used in combination with user\_data or user\_data\_base64 will trigger a destroy and recreate when set to true. Defaults to false if not set | `bool` | `null` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The ID of the VPC that the instance security group belongs to. | `string` | `""` | no |
